@@ -162,12 +162,16 @@ def get_parallel(vector):
         return 'none'
 
 def get_congrent():
-
+    # Mohon bantuannya
+    return 'two'
 
 def get_congruent():
-
+    # Mohon bantuannya
+    return 'yes'
 
 def get_right_angle_position():
+    # Mohon bantuannya
+    return 'right'
 
 
 titikTengah = [] #harus dijadikan variabel global
