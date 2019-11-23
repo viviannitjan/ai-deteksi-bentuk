@@ -98,6 +98,15 @@ def findAllAngles(vector):
         angle.append(sudut)
     return angle
 
+def add_fact(env, tipe, value):
+    fact_string = "(" + tipe + " " + value + ")"
+    fact = env.assert_string(fact_string)
+    template = fact.template
+    assert template.implied == True
+    new_fact = template.new_fact()
+    new_fact.assertit()
+    return env
+
 def get_vertices(corners):
     vertices = len(corners)
     if vertices>=6:
@@ -175,57 +184,46 @@ print(panjangSisi)
 print(vector)
 print(angles)
 
-inf = inflect.engine()
-
-number_of_vertices = get_vertices(corners)
-
-if number_of_vertices=='three' or number_of_vertices=='five' or number_of_vertices=='six':
-    number_of_same_edges = get_same_edges(panjangSisi)
-
-if number_of_same_edges=='two':
-    angles_type = get_angles_type(angles)
-
-if number_of_same_edges=='none':
-    number_acute_angles = get_acute_angles(angles)
-
-    if number_acute_angles=='two':
-        number_right_angles = get_right_angles(angles)
-
-if number_of_vertices=='four':
-    number_of_parallel = get_parallel(vector)
-    if number_of_parallel=='two':
-        number_of_congrent_side = get_congrent()
-    elif number_of_parallel=='one':
-        is_congruent = get_congruent()
-        if is_congruent=='no':
-            right_angle_position = get_right_angle_position()
-    
-
 # Inisiasi awal clipspy
 env = clips.Environment()
 env.load("shape_rule.clp")
 
-# Mendefinisikan fakta
-fact_string = "(number-of-vertices " + number_of_vertices + ")"
-fact = env.assert_string(fact_string)
-template = fact.template
-assert template.implied == True
-new_fact = template.new_fact()
-new_fact.assertit()
+inf = inflect.engine()
 
-fact_string = "(number-of-same-edges two)"
-fact = env.assert_string(fact_string)
-template = fact.template
-assert template.implied == True
-new_fact = template.new_fact()
-new_fact.assertit()
+number_of_vertices = get_vertices(corners)
+env = add_fact(env,"number-of-vertices",number_of_vertices)
 
-fact_string = "(angles-type right)"
-fact = env.assert_string(fact_string)
-template = fact.template
-assert template.implied == True
-new_fact = template.new_fact()
-new_fact.assertit()
+if number_of_vertices=='three' or number_of_vertices=='five' or number_of_vertices=='six':
+    number_of_same_edges = get_same_edges(panjangSisi)
+    env = add_fact(env,"number-of-same-edges",number_of_same_edges)
+
+if number_of_same_edges=='two':
+    angles_type = get_angles_type(angles)
+    env = add_fact(env,"angles-type",angles_type)
+
+if number_of_same_edges=='none':
+    number_acute_angles = get_acute_angles(angles)
+    env = add_fact(env,"number-acute-angles",number_acute_angles)
+
+    if number_acute_angles=='two':
+        number_right_angles = get_right_angles(angles)
+        env = add_fact(env,"number-right-angles",number_right_angles)
+
+if number_of_vertices=='four':
+    number_of_parallel = get_parallel(vector)
+    env = add_fact(env,"number-of-parallel",number_of_parallel)
+
+    if number_of_parallel=='two':
+        number_of_congrent_side = get_congrent()
+        env = add_fact(env,"number-of-congrent-side",number_of_congrent_side)
+
+    elif number_of_parallel=='one':
+        is_congruent = get_congruent()
+        env = add_fact(env,"is-the-legs-congruent",is_congruent)
+
+        if is_congruent=='no':
+            right_angle_position = get_right_angle_position()
+            env = add_fact(env,"right-angle-position",right_angle_position)
 
 # Untuk menjalankan clips dan mendapatkan hasil
 env.run()
