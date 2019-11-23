@@ -1,7 +1,8 @@
 import cv2
 import numpy as np
 import math
-
+import clips
+import inflect
 
 def countLengthVector(vec):
     length = math.hypot(vec[0], vec[1])
@@ -18,7 +19,7 @@ def countAngle(v1, v2):
     y1 = v1[1]
     y2 = v2[1]
     dotprod = x1*x2 + y1*y2 # x1*x2 + y1*y2
-    vectormltp = math.sqrt((x1**2 + y1**2) * (x2**2 + y2**2))
+    vectormltp = math.sqrt(np.float64(x1**2 + y1**2) * np.float64(x2**2 + y2**2))
     angle = math.acos(dotprod/vectormltp)
     angle = math.degrees(angle)
     if (x1*y2<x2*y1):
@@ -97,6 +98,68 @@ def findAllAngles(vector):
         angle.append(sudut)
     return angle
 
+def get_vertices(corners):
+    vertices = len(corners)
+    if vertices>=6:
+        return inf.number_to_words(6)
+    return inf.number_to_words(vertices)
+
+def get_same_edges(panjangSisi):
+    if len(panjangSisi) >= 5:
+        equal = True
+        for i in range(len(panjangSisi)):
+            if panjangSisi[0] != panjangSisi[i]:
+                equal = False
+                break
+        
+        if equal:
+            return inf.number_to_words(len(panjangSisi))
+        else:
+            return 'other'
+    else:
+        if panjangSisi[0]==panjangSisi[1] and panjangSisi[0]==panjangSisi[2]:
+            return 'three'
+        elif panjangSisi[0]==panjangSisi[1] or panjangSisi[0]==panjangSisi[2] or panjangSisi[1]==panjangSisi[2]:
+            return 'two'
+        else:
+            return 'none'
+
+def get_angles_type(angles):
+    if 90 in angles:
+        return 'right'
+    elif max(angles) > 90:
+        return 'obtuse'
+    else:
+        return 'acute'
+
+def get_acute_angles(angles):
+    if max(angles) < 90:
+        return 'three'
+    else:
+        return 'two'
+
+def get_right_angles(angles):
+    if 90 in angles:
+        return 'one'
+    else:
+        return 'none'
+
+def get_parallel(vector):
+    if cmp(vector[0],vector[2]) and cmp(vector[1],vector[3]):
+        return 'two'
+    elif cmp(vector[0],vector[2]) or cmp(vector[1],vector[3]):
+        return 'one'
+    else:
+        return 'none'
+
+def get_congrent():
+
+
+def get_congruent():
+
+
+def get_right_angle_position():
+
 
 titikTengah = [] #harus dijadikan variabel global
 tresh = processImage('triangle.png')
@@ -112,6 +175,69 @@ print(panjangSisi)
 print(vector)
 print(angles)
 
-cv2.imshow('ori', tresh)
+inf = inflect.engine()
+
+number_of_vertices = get_vertices(corners)
+
+if number_of_vertices=='three' or number_of_vertices=='five' or number_of_vertices=='six':
+    number_of_same_edges = get_same_edges(panjangSisi)
+
+if number_of_same_edges=='two':
+    angles_type = get_angles_type(angles)
+
+if number_of_same_edges=='none':
+    number_acute_angles = get_acute_angles(angles)
+
+    if number_acute_angles=='two':
+        number_right_angles = get_right_angles(angles)
+
+if number_of_vertices=='four':
+    number_of_parallel = get_parallel(vector)
+    if number_of_parallel=='two':
+        number_of_congrent_side = get_congrent()
+    elif number_of_parallel=='one':
+        is_congruent = get_congruent()
+        if is_congruent=='no':
+            right_angle_position = get_right_angle_position()
+    
+
+# Inisiasi awal clipspy
+env = clips.Environment()
+env.load("shape_rule.clp")
+
+# Mendefinisikan fakta
+fact_string = "(number-of-vertices " + number_of_vertices + ")"
+fact = env.assert_string(fact_string)
+template = fact.template
+assert template.implied == True
+new_fact = template.new_fact()
+new_fact.assertit()
+
+fact_string = "(number-of-same-edges two)"
+fact = env.assert_string(fact_string)
+template = fact.template
+assert template.implied == True
+new_fact = template.new_fact()
+new_fact.assertit()
+
+fact_string = "(angles-type right)"
+fact = env.assert_string(fact_string)
+template = fact.template
+assert template.implied == True
+new_fact = template.new_fact()
+new_fact.assertit()
+
+# Untuk menjalankan clips dan mendapatkan hasil
+env.run()
+
+# Untuk mendapatkan hasil shape
+facts = list(env.facts())
+shape = facts[-1]
+print(shape[0])
+
+
+cv2.namedWindow('image',cv2.WINDOW_NORMAL)
+cv2.resizeWindow('image', 600,400)
+cv2.imshow('image', tresh)
 cv2.waitKey(0) 
 cv2.destroyAllWindows()
