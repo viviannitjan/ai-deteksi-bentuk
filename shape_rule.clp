@@ -56,7 +56,7 @@
    (not (number-of-vertices ?))
    (not (known ?))
    =>
-   (assert (number-of-vertices (ask-question "How many vertices the shape has ?" three four five six other)))
+   (assert (number-of-vertices (ask-question "How many vertices the shape has ?" three four five six )))
 )
 ;;****************
 ;;* Triangle *
@@ -154,49 +154,132 @@
    (assert (known "Equilateral triangle"))
 )
 ;;****************
-;;* Irregular Quadrilaterals *
+;;*  Quadrilaterals *
 ;;****************
 (defrule type-of-quadrilaterals ""
    (number-of-vertices four)
    (not (known ?))
    =>
-   (assert (number-of-parallel (ask-question "How many pair parallel side ?" one two )))
+   (assert (all-same-edges  (yes-or-no-p "Are all the edges has equal length ")))
+)
+
+(defrule square-or-rhombus ""
+   (number-of-vertices four)
+   (all-same-edges yes)
+   (not (known ?))
+   =>
+   (assert (is-the-angles-right (yes-or-no-p "Are all the angles are right angles")))
 )
 ;;****************
-;;* Parallelogram *
+;;* Square*
+;;****************
+
+(defrule square-shape""
+   (number-of-vertices four)
+   (all-same-edges yes)
+   (is-the-angles-right yes)
+   (not (known ?))
+   =>
+   (assert (known "Square"))
+)
+
+;;****************
+;;* Rectangle*
+;;****************
+
+(defrule square-or-rectangle""
+   (number-of-vertices four)
+   (all-same-edges no)
+   (not (known ?))
+   =>
+   (assert (is-the-angles-right (yes-or-no-p "Are all the angles are right angles")))
+)
+(defrule rectangle-shape""
+   (number-of-vertices four)
+   (all-same-edges no)
+   (is-the-angles-right yes)
+   (not (known ?))
+   =>
+   (assert (known "Rectangle"))
+)
+;;****************
+;;* Rhombus*
+;;****************
+
+(defrule rhombus-shape""
+   (number-of-vertices four)
+   (all-same-edges yes)
+   (is-the-angles-right no)
+   (not (known ?))
+   =>
+   (assert (known "Rhombus"))
+)
+;;****************
+;;* Parallelogram / Trapezium *
 ;;****************
 (defrule type-of-parallelogram ""
    (number-of-vertices four)
+   (all-same-edges no)
+   (is-the-angles-right no)
+   (not (known ?))
+   =>
+   (assert (number-of-parallel(ask-question "How many pair of parallel side does the quadrilateral have ? " two none)))
+)
+
+;;****************
+;;* Parallelogram *
+;;****************
+(defrule parallelogram-or-kite ""
+   (number-of-vertices four)
+   (all-same-edges no)
+   (is-the-angles-right no)
    (number-of-parallel two)
    (not (known ?))
    =>
-   (assert (number-of-congruent-side (ask-question "How many  equal adjacent  edges parallelogram has ?" four two)))
+   (assert (known "Parallelogram"))
 )
 
 (defrule kite-parallelogram ""
    (number-of-vertices four)
-   (number-of-parallel two)
-   (number-of-congruent-side two)
+   (all-same-edges no)
+   (is-the-angles-right no)
+   (number-of-parallel none)
+   (not (known ?))
+   =>
+   (assert (consecutive sides are congruent(yes-or-no-p "Do the consecutive sides are congruent")))
+)
+
+(defrule kite-shape ""
+   (number-of-vertices four)
+   (all-same-edges no)
+   (is-the-angles-right no)
+   (number-of-parallel none)
+   (consecutive sides are congruent yes)
    (not (known ?))
    =>
    (assert (known "Kite"))
 )
 
-(defrule rhombus-parallelogram ""
+(defrule quadrilaterals-v2 ""
    (number-of-vertices four)
-   (number-of-parallel two)
-   (number-of-congruent-side four)
+   (all-same-edges no)
+   (is-the-angles-right no)
+   (number-of-parallel none)
+   (consecutive sides are congruent no)
    (not (known ?))
    =>
-   (assert (known "Rhombus"))
+   (assert (known "Irregular quadrilateral"))
 )
 
 (defrule quadrilaterals ""
    (number-of-vertices four)
-   (number-of-parallel none)
+   (all-same-edges no)
+   (is-the-angles-right no)
+   (is-the-angles-right yes no)
+   (number-of-parallel yes)
    (not (known ?))
    =>
-   (assert (known "Quadrilaterals"))
+   (assert (known "Irregular Trapezium"))
 )
 ;;****************
 ;;* Trapezoid *
@@ -255,10 +338,15 @@
    (number-of-vertices five)
    (not (known ?))
    =>
-   (assert (number-of-same-edges (ask-question "How many equal edges the pentagon has ?" five none)))
+   (assert (number-of-same-edges (ask-question "How many equal edges the pentagon has ?" five other)))
 )
-
-
+(defrule regular-pentagon-shape ""
+   (number-of-vertices five)
+   (number-of-same-edges five)
+   (not (known ?))
+   =>
+   (assert (known "Regular Pentagon"))
+)
 
 (defrule irregular-pentagon-shape ""
    (number-of-vertices five)
@@ -266,14 +354,6 @@
    (not (known ?))
    =>
    (assert (known "Irregular Pentagon"))
-)
-
-(defrule regular-pentagon-shape ""
-   (number-of-vertices five)
-   (number-of-same-edges five)
-   (not (known ?))
-   =>
-   (assert (known "Regular Pentagon"))
 )
 
 ;;****************
@@ -301,15 +381,6 @@
    (assert (known "Irregular Hexagon"))
 )
 
-;;****************
-;;* Other *
-;;****************
-(defrule other-shape""
-   (number-of-vertices other)
-   (not (known ?))
-   =>
-   (assert (known "Other Shape"))
-)
 
 
 ;;****************
