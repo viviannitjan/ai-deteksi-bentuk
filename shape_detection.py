@@ -141,8 +141,8 @@ def add_fact(env, tipe, value):
 
 def get_vertices(corners):
     vertices = len(corners)
-    if vertices>=6:
-        return inf.number_to_words(6)
+    if vertices>=7 or vertices<=2:
+        return 'other'
     return inf.number_to_words(vertices)
 
 def get_same_edges(panjangSisi):
@@ -194,8 +194,6 @@ def cmpr(vec1, vec2):
 def get_parallel(vec):
     if cmpr(vec[0],vec[2]) and cmpr(vec[1],vec[3]):
         return 'two'
-    elif cmpr(vec[0],vec[2]) or cmpr(vec[1],vec[3]):
-        return 'one'
     else:
         return 'none'
 
@@ -225,6 +223,27 @@ def get_right_angle_position(sudut):
     elif (sudut[1]==90 and sudut[2]==90):
         return 'left'
 
+def get_all_same_edges(panjangSisi):
+    if panjangSisi[0]==panjangSisi[1] and panjangSisi[0]==panjangSisi[2] and panjangSisi[0]==panjangSisi[3]:
+        return 'yes'
+    else:
+        return 'no'
+
+def is_the_angles_right(angles):
+    if angles[0]==90 and angles[1]==90 and angles[2]==90 and angles[3]==90:
+        return 'yes'
+    else:
+        return 'no'
+
+def get_consecutive_sides_congruent(panjangSisi):
+    if (panjangSisi[0]==panjangSisi[1]) and (panjangSisi[2]==panjangSisi[3]):
+        return 'yes'
+    elif (panjangSisi[0]==panjangSisi[2]) and (panjangSisi[1]==panjangSisi[3]):
+        return 'yes'
+    elif (panjangSisi[0]==panjangSisi[3]) and (panjangSisi[1]==panjangSisi[2]):
+        return 'yes'
+    else:
+        return 'no'
 
 titikTengah = [] #harus dijadikan variabel global
 tresh = processImage('hexagon.jpeg')
@@ -272,22 +291,25 @@ if number_of_vertices=='three' or number_of_vertices=='five' or number_of_vertic
             env = add_fact(env,"number-right-angles",number_right_angles)
 
 if number_of_vertices=='four':
-    number_of_parallel = get_parallel(unitVector)
-    print('paralel ', number_of_parallel)
-    env = add_fact(env,"number-of-parallel",number_of_parallel)
+    all_same_edges = get_all_same_edges(panjangSisi)
+    env = add_fact(env,"all_same_edges",all_same_edges)
 
-    if number_of_parallel=='two':
-        number_of_congrent_side = get_congrent(panjangSisi)
-        print(number_of_congrent_side)
-        env = add_fact(env,"number-of-congrent-side",number_of_congrent_side)
+    if all_same_edges=='yes':
+        the_angles_right = is_the_angles_right(angles)
+        env = add_fact(env,"is-the-angles-right",the_angles_right)
+    else:
+        the_angles_right = is_the_angles_right(angles)
+        env = add_fact(env,"is-the-angles-right",the_angles_right)
 
-    elif number_of_parallel=='one':
-        is_congruent = get_congruent(panjangSisi)
-        env = add_fact(env,"is-the-legs-congruent",is_congruent)
+        if the_angles_right=='no':
+            number_of_parallel = get_parallel(unitVector)
+            print('paralel ', number_of_parallel)
+            env = add_fact(env,"number-of-parallel",number_of_parallel)
 
-        if is_congruent=='no':
-            right_angle_position = get_right_angle_position(angles)
-            env = add_fact(env,"right-angle-position",right_angle_position)
+            if number_of_parallel=='none':
+                consecutive_sides_congruent = get_consecutive_sides_congruent(panjangSisi)
+                env = add_fact(env,"consecutive-sides-are-congruent",consecutive_sides_congruent)
+
 
 # Untuk menjalankan clips dan mendapatkan hasil
 env.run()

@@ -246,7 +246,7 @@
    (number-of-parallel none)
    (not (known ?))
    =>
-   (assert (consecutive sides are congruent(yes-or-no-p "Do the consecutive sides are congruent")))
+   (assert (consecutive-sides-are-congruent(yes-or-no-p "Do the consecutive sides are congruent")))
 )
 
 (defrule kite-shape ""
@@ -254,7 +254,7 @@
    (all-same-edges no)
    (is-the-angles-right no)
    (number-of-parallel none)
-   (consecutive sides are congruent yes)
+   (consecutive-sides-are-congruent yes)
    (not (known ?))
    =>
    (assert (known "Kite"))
@@ -265,7 +265,7 @@
    (all-same-edges no)
    (is-the-angles-right no)
    (number-of-parallel none)
-   (consecutive sides are congruent no)
+   (consecutive-sides-are-congruent no)
    (not (known ?))
    =>
    (assert (known "Irregular quadrilateral"))
@@ -275,7 +275,6 @@
    (number-of-vertices four)
    (all-same-edges no)
    (is-the-angles-right no)
-   (is-the-angles-right yes no)
    (number-of-parallel yes)
    (not (known ?))
    =>
