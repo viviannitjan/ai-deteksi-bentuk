@@ -28,6 +28,5 @@ Program yang dibuat menggunakan Python serta CLIPS sebagai sistem rule based.
 
 # 
 
-## Screenshot program
-Inline-style: 
-![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+## Contoh gambar
+Contoh gambar ada pada folder testimage
