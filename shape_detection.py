@@ -262,6 +262,16 @@ def get_consecutive_sides_congruent(panjangSisi):
 def renderImage(image):
     cv2.imwrite('output.jpg', image)
 
+def printRules():
+    env = clips.Environment()
+    env.load("shape_rule.clp")
+
+    rules = list(env.rules())
+    f = open("rules.txt","w")
+    for rule in rules:
+        f.write(str(rule)+"\n")
+    f.close()
+
 def main(file_path):
     titikTengah = [] #harus dijadikan variabel global
     # tresh = processImage('testimage/scalene-triangle.jpg')
@@ -338,21 +348,19 @@ def main(file_path):
                 consecutive_sides_congruent = get_consecutive_sides_congruent(panjangSisi)
                 env = add_fact(env,"consecutive-sides-are-congruent",consecutive_sides_congruent)
 
+    agendas = list(env.activations())
+    agendas = list(reversed(agendas))
+    f = open("agenda.txt","w")
+    for agenda in agendas:
+        f.write(str(agenda)+"\n")
+    f.close()
+
     # Untuk menjalankan clips dan mendapatkan hasil
     env.run()
 
     # Untuk mendapatkan hasil shape
     facts = list(env.facts())
-    shape = facts[-1]
-    shape = shape[0]
-
-    # Untuk mendapatkan hasil fakta
-    facts = list(env.facts())
-    for fact in facts:
-        if len(fact)!=0:
-            fact = 
-
-
+    env.save_facts("facts.txt")
 
     cv2.namedWindow('image',cv2.WINDOW_NORMAL)
     cv2.resizeWindow('image', 600,400)
