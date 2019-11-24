@@ -2,6 +2,7 @@ import tkinter
 from tkinter import ttk
 from tkinter import filedialog
 from PIL import Image, ImageTk
+import shape_detection
 
 # import shape_detection as sd
 
@@ -51,7 +52,7 @@ def main():
     open_image_button = ttk.Button(main_frame,
                                    text='Open Image')
     open_image_button.pack()
-    open_image_button['command'] = lambda: show_pics_open_image(img1_data)
+    open_image_button['command'] = lambda: show_pics_open_image(img1_data, detection_result, match_facts, hit_rules)
 
     rule_editor_button = ttk.Button(main_frame, text='Open rule editor')
     rule_editor_button.pack()
@@ -133,7 +134,7 @@ def go_to_editor_page():
     decrease_button['command'] = "HMM"
 
 
-def show_pics_open_image(data):
+def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rules_data):
     f_path = filedialog.askopenfilename()
     image = Image.open(f_path)
     image = image.resize((500, 300), Image.ANTIALIAS)
@@ -143,6 +144,17 @@ def show_pics_open_image(data):
     data.id_label.configure(image=photo);
     data.id_label.image = photo
     print("current file path: ", CURRENT_FILE_PATH_BE_PROCESSED)
+
+    result = shape_detection.main(CURRENT_FILE_PATH_BE_PROCESSED)
+
+    detection_result_data.id_label.delete('1.0', tkinter.END)
+    detection_result_data.id_label.insert(tkinter.END, "Hit Rules")
+
+    match_facts_data.id_label.delete('1.0', tkinter.END)
+    match_facts_data.id_label.insert(tkinter.END, "Hit Rules")
+
+    hit_rules_data.id_label.delete('1.0', tkinter.END)
+    hit_rules_data.id_label.insert(tkinter.END, "Hit Rules")
 
 
 def open_rule_editor():
@@ -158,7 +170,7 @@ def go_to_new_page(texts):
 
     lblSize = tkinter.Label(window2_frame, font=("Courier new", 13))
     lblSize.pack(side='left', padx=20)
-    make_scroll(lblSize, rows=30, length_per_rows=70, payload=texts)
+    make_scroll(lblSize, rows=30, length_per_rows=70, payload=texts)    
 
 
 main()

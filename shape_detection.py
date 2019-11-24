@@ -262,93 +262,101 @@ def get_consecutive_sides_congruent(panjangSisi):
 def renderImage(image):
     cv2.imwrite('output.jpg', image)
 
-titikTengah = [] #harus dijadikan variabel global
-tresh = processImage('testimage/scalene-triangle.jpg')
-corners = findTitikSudut(tresh)
-titikTengah = counttitikTengah(corners)
-corners = sorted(corners, key=sortCorner) #memutar sudut melawan arah jarum jam
-vector, unitVector = findVectors(corners)
-unitVector = errorTolerantVector(unitVector)
-angles = findAllAngles(vector)
-angels = errorTolerant(angles, 3)
-panjangSisi = findPanjangSemuaSisi(vector)
-panjangSisi = errorTolerant(panjangSisi, 6)
+def main(file_path):
+    titikTengah = [] #harus dijadikan variabel global
+    # tresh = processImage('testimage/scalene-triangle.jpg')
+    tresh = processImage(file_path)
+    corners = findTitikSudut(tresh)
+    titikTengah = counttitikTengah(corners)
+    corners = sorted(corners, key=sortCorner) #memutar sudut melawan arah jarum jam
+    vector, unitVector = findVectors(corners)
+    unitVector = errorTolerantVector(unitVector)
+    angles = findAllAngles(vector)
+    angels = errorTolerant(angles, 3)
+    panjangSisi = findPanjangSemuaSisi(vector)
+    panjangSisi = errorTolerant(panjangSisi, 6)
 
-print(corners)
-print(panjangSisi)
-print(vector)
-print(unitVector)
-print(angles)
+    print(corners)
+    print(panjangSisi)
+    print(vector)
+    print(unitVector)
+    print(angles)
 
-# Inisiasi awal clipspy
-env = clips.Environment()
-env.load("shape_rule.clp")
+    # Inisiasi awal clipspy
+    env = clips.Environment()
+    env.load("shape_rule.clp")
 
-inf = inflect.engine()
+    inf = inflect.engine()
 
-number_of_vertices = get_vertices(corners)
-env = add_fact(env,"number-of-vertices",number_of_vertices)
+    number_of_vertices = get_vertices(corners)
+    env = add_fact(env,"number-of-vertices",number_of_vertices)
 
-if number_of_vertices=='three' or number_of_vertices=='five':
-    number_of_same_edges = get_same_edges(panjangSisi)
-    env = add_fact(env,"number-of-same-edges",number_of_same_edges)
+    if number_of_vertices=='three' or number_of_vertices=='five':
+        number_of_same_edges = get_same_edges(panjangSisi)
+        env = add_fact(env,"number-of-same-edges",number_of_same_edges)
 
-    if number_of_same_edges=='two':
-        angles_type = get_angles_type(angles)
-        env = add_fact(env,"angles-type",angles_type)
+        if number_of_same_edges=='two':
+            angles_type = get_angles_type(angles)
+            env = add_fact(env,"angles-type",angles_type)
 
-    if number_of_same_edges=='none':
-        number_acute_angles = get_acute_angles(angles)
-        env = add_fact(env,"number-acute-angles",number_acute_angles)
+        if number_of_same_edges=='none':
+            number_acute_angles = get_acute_angles(angles)
+            env = add_fact(env,"number-acute-angles",number_acute_angles)
 
-        if number_acute_angles=='two':
-            number_right_angles = get_right_angles(angles)
-            env = add_fact(env,"number-right-angles",number_right_angles)
+            if number_acute_angles=='two':
+                number_right_angles = get_right_angles(angles)
+                env = add_fact(env,"number-right-angles",number_right_angles)
 
-if number_of_vertices=='six':
-    isAllAngleSame = checkAllAnglesSame(angles)
-    env = add_fact(env,"is-all-angles-same",isAllAngleSame)
+    if number_of_vertices=='six':
+        isAllAngleSame = checkAllAnglesSame(angles)
+        env = add_fact(env,"is-all-angles-same",isAllAngleSame)
 
-if number_of_vertices=='four':
-    all_same_edges = get_all_same_edges(panjangSisi)
-    env = add_fact(env,"all-same-edges",all_same_edges)
+    if number_of_vertices=='four':
+        all_same_edges = get_all_same_edges(panjangSisi)
+        env = add_fact(env,"all-same-edges",all_same_edges)
 
-    if all_same_edges=='yes':
-        the_angles_right = is_the_angles_right(angles)
-        env = add_fact(env,"is-the-angles-right",the_angles_right)
-    else:
-        the_angles_right = is_the_angles_right(angles)
-        env = add_fact(env,"is-the-angles-right",the_angles_right)
+        if all_same_edges=='yes':
+            the_angles_right = is_the_angles_right(angles)
+            env = add_fact(env,"is-the-angles-right",the_angles_right)
+        else:
+            the_angles_right = is_the_angles_right(angles)
+            env = add_fact(env,"is-the-angles-right",the_angles_right)
 
-        if the_angles_right=='no':
-            number_of_parallel = get_parallel(unitVector)
-            env = add_fact(env,"number-of-parallel",number_of_parallel)
+            if the_angles_right=='no':
+                number_of_parallel = get_parallel(unitVector)
+                env = add_fact(env,"number-of-parallel",number_of_parallel)
 
-        if number_of_parallel=='one':	
-            is_congruent = get_congruent(panjangSisi)
-            env = add_fact(env,"is-the-legs-congruent",is_congruent)
-            
-            if is_congruent=='no':
-                right_angle_position = get_right_angle_position(angles)	
-                env = add_fact(env,"right-angle-position",right_angle_position)
+            if number_of_parallel=='one':	
+                is_congruent = get_congruent(panjangSisi)
+                env = add_fact(env,"is-the-legs-congruent",is_congruent)
+                
+                if is_congruent=='no':
+                    right_angle_position = get_right_angle_position(angles)	
+                    env = add_fact(env,"right-angle-position",right_angle_position)
 
-        elif number_of_parallel=='none':
-            consecutive_sides_congruent = get_consecutive_sides_congruent(panjangSisi)
-            env = add_fact(env,"consecutive-sides-are-congruent",consecutive_sides_congruent)
+            elif number_of_parallel=='none':
+                consecutive_sides_congruent = get_consecutive_sides_congruent(panjangSisi)
+                env = add_fact(env,"consecutive-sides-are-congruent",consecutive_sides_congruent)
+
+    # Untuk menjalankan clips dan mendapatkan hasil
+    env.run()
+
+    # Untuk mendapatkan hasil shape
+    facts = list(env.facts())
+    shape = facts[-1]
+    shape = shape[0]
+
+    # Untuk mendapatkan hasil fakta
+    facts = list(env.facts())
+    for fact in facts:
+        if len(fact)!=0:
+            fact = 
 
 
-# Untuk menjalankan clips dan mendapatkan hasil
-env.run()
 
-# Untuk mendapatkan hasil shape
-facts = list(env.facts())
-shape = facts[-1]
-print(shape[0])
-
-
-cv2.namedWindow('image',cv2.WINDOW_NORMAL)
-cv2.resizeWindow('image', 600,400)
-cv2.imshow('image', tresh)
-renderImage(tresh)
-cv2.waitKey(0) 
-cv2.destroyAllWindows()
+    cv2.namedWindow('image',cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('image', 600,400)
+    cv2.imshow('image', tresh)
+    renderImage(tresh)
+    cv2.waitKey(0) 
+    cv2.destroyAllWindows()
