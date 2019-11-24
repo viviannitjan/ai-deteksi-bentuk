@@ -2,12 +2,16 @@ import tkinter
 from tkinter import ttk
 from tkinter import filedialog
 from PIL import Image, ImageTk
-import shape_detection
+import shape_detection as sd
 
 # import shape_detection as sd
 
 CURRENT_FILE_PATH_BE_PROCESSED = "D:\semester5\AI-tubes\giphy.gif"
-FILE_TO_BE_EDITED = "D:\semester5\AI-tubes\shape_rule.clp"
+FILE_TO_BE_EDITED = ".\\shape_rule.clp"
+CURRENT_FACT_FILE = ".\\facts.txt"
+CURRENT_AGENDA_FILE = ".\\agenda.txt"
+CURRENT_RULES_FILE = ".\\rules.txt"
+
 DUMMY_TEXTS = """HAMLET: To be, or not to be--that is the question:
                 Whether 'tis nobler in the mind to suffer
                 The slings and arrows of outrageous fortune
@@ -17,6 +21,7 @@ DUMMY_TEXTS = """HAMLET: To be, or not to be--that is the question:
                 The heartache, and the thousand natural shocks
                 That flesh is heir to. 'Tis a consummation
                 Devoutly to be wished."""
+
 
 class Data(object):
     def __init__(self):
@@ -43,10 +48,11 @@ def main():
     img1_data.id_label.pack(side='left')
     img1_data.id_label['command'] = lambda: print('Source Image')
 
-    button2 = ttk.Button(main_frame, image=photo)
-    button2.image = photo
-    button2.pack(side='left')
-    button2['command'] = lambda: print('Detection Image')
+    img2_data = Data()
+    img2_data.id_label = ttk.Button(main_frame, image=photo)
+    img2_data.id_label.image = photo
+    img2_data.id_label.pack(side='left')
+    img2_data.id_label['command'] = lambda: print('Detection Image')
 
     # Four buttons
     open_image_button = ttk.Button(main_frame,
@@ -61,24 +67,24 @@ def main():
     show_rules_button = ttk.Button(main_frame,
                                    text='Show Rules')
     show_rules_button.pack()
-    show_rules_button['command'] = lambda: go_to_rules_page()
+    show_rules_button['command'] = lambda: go_to_new_page("TOOTOOOODOOOO")  # todo
 
     show_facts_button = ttk.Button(main_frame,
                                    text='Show Facts')
     show_facts_button.pack()
-    show_facts_button['command'] = lambda: print('chuan1')
+    show_facts_button['command'] = lambda: go_to_new_page("TOOTOOOODOOOO")  # todo
 
     # Another Label, with its text set another way
-    label2 = ttk.Label(main_frame)
-    label2['text'] = 'What shape do you want?'
-    label2.pack()
+    # label2 = ttk.Label(main_frame)
+    # label2['text'] = 'What shape do you want?'
+    # label2.pack()
+    #
+    # change_title_button5 = ttk.Button(main_frame,
+    #                                   text='HMM the Title (above)')
+    # change_title_button5.pack()
+    # change_title_button5['command'] = lambda: print('chuan1')
 
-    change_title_button5 = ttk.Button(main_frame,
-                                      text='HMM the Title (above)')
-    change_title_button5.pack()
-    change_title_button5['command'] = lambda: print('chuan1')
-
-    # -----------------------------------------------------
+    # ----------------------------------------------------------------------------------------------
     main_frame2 = ttk.Frame(root, padding=20)
     main_frame2.grid()
 
@@ -118,20 +124,30 @@ def make_scroll(parrent, rows=15, length_per_rows=40, quote="NO FILL"):
     return T
 
 
+def save_editor_page(texts):
+    with open(FILE_TO_BE_EDITED, 'w') as f:
+        f.write(texts)
+        f.close()
+
+
 def go_to_editor_page():
     root2 = tkinter.Toplevel()  # Note Toplevel, NOT Tk.
 
     window2_frame = ttk.Frame(root2, padding=20)
     window2_frame.grid()
 
-    lblSize = tkinter.Label(window2_frame, font=("Courier new", 13))
-    lblSize.pack(side='left', padx=20)
-    make_scroll(lblSize, rows=30, length_per_rows=70)
+    with open(FILE_TO_BE_EDITED, 'r') as f:
+        output = f.read()
+        lblSize = tkinter.Label(window2_frame, font=("Courier new", 13))
+        lblSize.pack(side='left', padx=20)
+
+    data_text = Data()
+    data_text.id_label = make_scroll(lblSize, rows=30, length_per_rows=70, quote=output)
 
     decrease_button = ttk.Button(window2_frame,
                                  text='Save to shape_rule.clp')
     decrease_button.pack(side='right')
-    decrease_button['command'] = "HMM"
+    decrease_button['command'] = lambda: save_editor_page(data_text.id_label.get('1.0', tkinter.END))
 
 
 def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rules_data):
@@ -145,22 +161,22 @@ def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rule
     data.id_label.image = photo
     print("current file path: ", CURRENT_FILE_PATH_BE_PROCESSED)
 
-    result = shape_detection.main(CURRENT_FILE_PATH_BE_PROCESSED)
+    sd.main(f_path)
+
+    facts = lines_in_even()
 
     detection_result_data.id_label.delete('1.0', tkinter.END)
-    detection_result_data.id_label.insert(tkinter.END, "Hit Rules")
+    detection_result_data.id_label.insert(tkinter.END, facts[-1])
 
     match_facts_data.id_label.delete('1.0', tkinter.END)
-    match_facts_data.id_label.insert(tkinter.END, "Hit Rules")
+    match_facts_data.id_label.insert(tkinter.END, lines_in_even())
 
+    f = open(CURRENT_AGENDA_FILE, "r")
+    f = f.read()
     hit_rules_data.id_label.delete('1.0', tkinter.END)
-    hit_rules_data.id_label.insert(tkinter.END, "Hit Rules")
+    hit_rules_data.id_label.insert(tkinter.END, f)
 
-
-def open_rule_editor():
-    with open(FILE_TO_BE_EDITED, 'r') as f:
-        output = f.read()
-
+    f.close()
 
 def go_to_new_page(texts):
     root2 = tkinter.Toplevel()  # Note Toplevel, NOT Tk.
@@ -170,7 +186,23 @@ def go_to_new_page(texts):
 
     lblSize = tkinter.Label(window2_frame, font=("Courier new", 13))
     lblSize.pack(side='left', padx=20)
-    make_scroll(lblSize, rows=30, length_per_rows=70, payload=texts)    
+    make_scroll(lblSize, rows=30, length_per_rows=70, quote=texts)
+
+
+def lines_in_even():
+    output = ""
+    rows = 0
+    with open(CURRENT_FACT_FILE) as f:
+        content = f.readlines()
+        print(content)
+
+        for i in range(1, len(content), 2):
+            output += content[i]
+
+    print("Output")
+    print(output)
+    return output
+
 
 
 main()

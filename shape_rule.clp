@@ -392,3 +392,19 @@
   (printout t "Shape:")
   (printout t crlf crlf)
   (format t " %s%n%n%n" ?item))
+
+
+;;****************
+;;* Print Result *
+;;****************
+
+;;****************
+;;* Print Result *
+;;****************
+
+;;****************
+;;* Print Result *
+;;****************
+
+
+
