@@ -13,6 +13,12 @@ def makeVector(point1, point2):
     y = point1[1] - point2[1]
     return [x,y]
 
+def makeUnitVector(point1, point2):
+    x = point1[0] - point2[0]
+    y = point1[1] - point2[1]
+    lenvec = countLengthVector([x,y])
+    return [abs(x/lenvec), abs(y/lenvec)]
+
 def countAngle(v1, v2):
     x1 = v1[0]
     x2 = v2[0]
@@ -65,20 +71,46 @@ def findTitikSudut(tresh):
     corners = []
     for cnt in contours:
         approx = cv2.approxPolyDP(cnt, 0.01*cv2.arcLength(cnt, True), True)
-        cv2.drawContours(tresh, [approx], 0, (255,255,255), 5)  
+        cv2.drawContours(tresh, [cnt], 0, (255,255,255), 5)  
         corners = approx.reshape((len(approx),2))
     return corners
 
 def findVectors(corners):
     vector = []
+    unitVector = []
     for i in range (len(corners)):
         if (i==len(corners)-1):
             next = 0
         else:
             next = i+1
         vektor = makeVector(corners[i], corners[next])
+        unitVektor = makeUnitVector(corners[i], corners[next])
         vector.append(vektor)
-    return vector
+        unitVector.append(unitVektor)
+    return vector, unitVector
+
+def errorTolerant(arr, deltae):
+    for i in range (len(arr)):
+        acuan = arr[i]
+        for j in range (i+1,len(arr)):
+            if (abs(acuan-arr[j])<=deltae):
+                arr[j]=acuan
+    return arr
+
+def errorTolerantVector(vec):
+    x = []
+    y = []
+    for i in range (len(vec)):
+        x.append(vec[i][0])
+        y.append(vec[i][1])
+    
+    x = errorTolerant(x,0.03)
+    y = errorTolerant(y,0.03)
+
+    vec = []
+    for j in range (len(x)):
+        vec.append([x[j],y[j]])
+    return vec
 
 def findPanjangSemuaSisi(vectors):
     panjang = []
@@ -153,39 +185,64 @@ def get_right_angles(angles):
     else:
         return 'none'
 
-def get_parallel(vector):
-    if cmp(vector[0],vector[2]) and cmp(vector[1],vector[3]):
+def cmpr(vec1, vec2):
+    if (vec1[0]==vec2[0] and vec1[1]==vec2[1]):
+        return True
+    else:
+        return False
+
+def get_parallel(vec):
+    if cmpr(vec[0],vec[2]) and cmpr(vec[1],vec[3]):
         return 'two'
-    elif cmp(vector[0],vector[2]) or cmp(vector[1],vector[3]):
+    elif cmpr(vec[0],vec[2]) or cmpr(vec[1],vec[3]):
         return 'one'
     else:
         return 'none'
 
-def get_congrent():
-    # Mohon bantuannya
-    return 'two'
+def countUniqueElmt(arr):
+	m = []
+	for x in arr:
+		if x not in m:
+			m.append(x)
+	return m
 
-def get_congruent():
-    # Mohon bantuannya
-    return 'yes'
+def get_congrent(sisi):
+    unique = countUniqueElmt(sisi)
+    if (len(unique)==1):
+        return 'four'
+    elif (len(unique)==2):
+        return 'two'
 
-def get_right_angle_position():
-    # Mohon bantuannya
-    return 'right'
+def get_congruent(sisi):
+    if (sisi[0]==sisi[2] or sisi[1]==sisi[3]):
+        return 'yes'
+    else:
+        return 'no'
+
+def get_right_angle_position(sudut):
+    if (sudut[0]==sudut[3] and sudut[3]==90):
+        return 'right'
+    elif (sudut[1]==90 and sudut[2]==90):
+        return 'left'
 
 
 titikTengah = [] #harus dijadikan variabel global
-tresh = processImage('triangle.png')
+tresh = processImage('hexagon.jpeg')
 corners = findTitikSudut(tresh)
 titikTengah = counttitikTengah(corners)
-# corners = sorted(corners, key=sortCorner)
-vector = findVectors(corners)
+corners = sorted(corners, key=sortCorner) #memutar sudut melawan arah jarum jam
+vector, unitVector = findVectors(corners)
+unitVector = errorTolerantVector(unitVector)
 angles = findAllAngles(vector)
+angels = errorTolerant(angles, 3)
 panjangSisi = findPanjangSemuaSisi(vector)
+panjangSisi = errorTolerant(panjangSisi, 6)
 
 print(corners)
 print(panjangSisi)
 print(vector)
+print(unitVector)
+print(unitVector)
 print(angles)
 
 # Inisiasi awal clipspy
@@ -199,34 +256,37 @@ env = add_fact(env,"number-of-vertices",number_of_vertices)
 
 if number_of_vertices=='three' or number_of_vertices=='five' or number_of_vertices=='six':
     number_of_same_edges = get_same_edges(panjangSisi)
+    print(number_of_same_edges)
     env = add_fact(env,"number-of-same-edges",number_of_same_edges)
 
-if number_of_same_edges=='two':
-    angles_type = get_angles_type(angles)
-    env = add_fact(env,"angles-type",angles_type)
+    if number_of_same_edges=='two':
+        angles_type = get_angles_type(angles)
+        env = add_fact(env,"angles-type",angles_type)
 
-if number_of_same_edges=='none':
-    number_acute_angles = get_acute_angles(angles)
-    env = add_fact(env,"number-acute-angles",number_acute_angles)
+    if number_of_same_edges=='none':
+        number_acute_angles = get_acute_angles(angles)
+        env = add_fact(env,"number-acute-angles",number_acute_angles)
 
-    if number_acute_angles=='two':
-        number_right_angles = get_right_angles(angles)
-        env = add_fact(env,"number-right-angles",number_right_angles)
+        if number_acute_angles=='two':
+            number_right_angles = get_right_angles(angles)
+            env = add_fact(env,"number-right-angles",number_right_angles)
 
 if number_of_vertices=='four':
-    number_of_parallel = get_parallel(vector)
+    number_of_parallel = get_parallel(unitVector)
+    print('paralel ', number_of_parallel)
     env = add_fact(env,"number-of-parallel",number_of_parallel)
 
     if number_of_parallel=='two':
-        number_of_congrent_side = get_congrent()
+        number_of_congrent_side = get_congrent(panjangSisi)
+        print(number_of_congrent_side)
         env = add_fact(env,"number-of-congrent-side",number_of_congrent_side)
 
     elif number_of_parallel=='one':
-        is_congruent = get_congruent()
+        is_congruent = get_congruent(panjangSisi)
         env = add_fact(env,"is-the-legs-congruent",is_congruent)
 
         if is_congruent=='no':
-            right_angle_position = get_right_angle_position()
+            right_angle_position = get_right_angle_position(angles)
             env = add_fact(env,"right-angle-position",right_angle_position)
 
 # Untuk menjalankan clips dan mendapatkan hasil
