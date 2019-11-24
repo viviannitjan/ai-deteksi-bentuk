@@ -362,11 +362,11 @@
    (number-of-vertices six)
    (not (known ?))
    =>
-   (assert (number-of-same-edges (ask-question "How many equal edges the hexagon has ?" six other)))
+   (assert (is-all-angles-same(yes-or-no-p "Do all the angles same?")))
 )
 (defrule regular-hexagon-shape ""
    (number-of-vertices six)
-   (number-of-same-edges six)
+   (is-all-angles-same yes)
    (not (known ?))
    =>
    (assert (known "Regular Hexagon"))
@@ -374,7 +374,7 @@
 
 (defrule irregular-hexagon-shape ""
    (number-of-vertices six)
-   (number-of-same-edges other)
+   (is-all-angles-same no)
    (not (known ?))
    =>
    (assert (known "Irregular Hexagon"))
