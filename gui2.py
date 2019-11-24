@@ -2,11 +2,20 @@ import tkinter
 from tkinter import ttk
 from tkinter import filedialog
 from PIL import Image, ImageTk
-import shape_detection as sd
+
+# import shape_detection as sd
 
 CURRENT_FILE_PATH_BE_PROCESSED = "D:\semester5\AI-tubes\giphy.gif"
 FILE_TO_BE_EDITED = "D:\semester5\AI-tubes\shape_rule.clp"
-
+DUMMY_TEXTS = """HAMLET: To be, or not to be--that is the question:
+                Whether 'tis nobler in the mind to suffer
+                The slings and arrows of outrageous fortune
+                Or to take arms against a sea of troubles
+                And by opposing end them. To die, to sleep--
+                No more--and by a sleep to say we end
+                The heartache, and the thousand natural shocks
+                That flesh is heir to. 'Tis a consummation
+                Devoutly to be wished."""
 
 class Data(object):
     def __init__(self):
@@ -14,9 +23,7 @@ class Data(object):
 
 
 def main():
-
     root = tkinter.Tk()
-
 
     main_frame = ttk.Frame(root, padding=20)
     main_frame.grid()
@@ -53,7 +60,7 @@ def main():
     show_rules_button = ttk.Button(main_frame,
                                    text='Show Rules')
     show_rules_button.pack()
-    show_rules_button['command'] = lambda: print('chuan1')
+    show_rules_button['command'] = lambda: go_to_rules_page()
 
     show_facts_button = ttk.Button(main_frame,
                                    text='Show Facts')
@@ -78,41 +85,37 @@ def main():
     lblSize1.pack(side='left', padx=20)
     detection_result = Data()
     detection_result.id_label = make_scroll(lblSize1)
-    detection_result['text'] = "HMMMMMM"
+    detection_result.id_label.delete('1.0', tkinter.END)
+    detection_result.id_label.insert(tkinter.END, "Detection result")
 
     lblSize2 = tkinter.Label(main_frame2, text="Setting form size to 500X500", font=("Comic Sans", 13), width=40)
     lblSize2.pack(side='left', padx=20)
-    make_scroll(lblSize2)
+    match_facts = Data()
+    match_facts.id_label = make_scroll(lblSize2)
+    match_facts.id_label.delete('1.0', tkinter.END)
+    match_facts.id_label.insert(tkinter.END, "Match facts")
 
     lblSize3 = tkinter.Label(main_frame2, text="Setting form size to 500X500", font=("Comic Sans", 13), width=40)
     lblSize3.pack(side='left', padx=20)
-    make_scroll(lblSize3)
+    hit_rules = Data()
+    hit_rules.id_label = make_scroll(lblSize3)
+    hit_rules.id_label.delete('1.0', tkinter.END)
+    hit_rules.id_label.insert(tkinter.END, "Hit Rules")
 
     root.mainloop()
 
 
-def make_scroll(parrent, rows=15, length_per_rows=40):
+def make_scroll(parrent, rows=15, length_per_rows=40, quote="NO FILL"):
     S = tkinter.Scrollbar(parrent)
     T = tkinter.Text(parrent, height=rows, width=length_per_rows)
     S.pack(side='right', fill=tkinter.Y)
     T.pack(side='left', fill=tkinter.Y)
     S.config(command=T.yview)
     T.config(yscrollcommand=S.set)
-    quote = """HAMLET: To be, or not to be--that is the question:
-                Whether 'tis nobler in the mind to suffer
-                The slings and arrows of outrageous fortune
-                Or to take arms against a sea of troubles
-                And by opposing end them. To die, to sleep--
-                No more--and by a sleep to say we end
-                The heartache, and the thousand natural shocks
-                That flesh is heir to. 'Tis a consummation
-                Devoutly to be wished."""
+
     T.insert(tkinter.END, quote)
     return T
 
-
-def update_text_box(data, message):
-    data.id_label['text'] = message
 
 def go_to_editor_page():
     root2 = tkinter.Toplevel()  # Note Toplevel, NOT Tk.
@@ -141,13 +144,21 @@ def show_pics_open_image(data):
     data.id_label.image = photo
     print("current file path: ", CURRENT_FILE_PATH_BE_PROCESSED)
 
+
 def open_rule_editor():
     with open(FILE_TO_BE_EDITED, 'r') as f:
         output = f.read()
 
 
+def go_to_new_page(texts):
+    root2 = tkinter.Toplevel()  # Note Toplevel, NOT Tk.
 
-# def show_rules():
+    window2_frame = ttk.Frame(root2, padding=20)
+    window2_frame.grid()
+
+    lblSize = tkinter.Label(window2_frame, font=("Courier new", 13))
+    lblSize.pack(side='left', padx=20)
+    make_scroll(lblSize, rows=30, length_per_rows=70, payload=texts)
 
 
 main()
