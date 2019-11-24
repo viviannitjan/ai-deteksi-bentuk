@@ -17,7 +17,7 @@ def makeUnitVector(point1, point2):
     x = point1[0] - point2[0]
     y = point1[1] - point2[1]
     lenvec = countLengthVector([x,y])
-    return [abs(x/lenvec), abs(y/lenvec)]
+    return [x/lenvec, y/lenvec]
 
 def countAngle(v1, v2):
     x1 = v1[0]
@@ -130,6 +130,16 @@ def findAllAngles(vector):
         angle.append(sudut)
     return angle
 
+def checkAllAnglesSame(arr):
+    result = False
+    if len(arr) > 0 :
+        result = all(elem == arr[0] for elem in arr)
+    
+    if result:
+        return 'yes'
+    else:
+        return 'no'
+
 def add_fact(env, tipe, value):
     fact_string = "(" + tipe + " " + value + ")"
     fact = env.assert_string(fact_string)
@@ -188,12 +198,16 @@ def get_right_angles(angles):
 def cmpr(vec1, vec2):
     if (vec1[0]==vec2[0] and vec1[1]==vec2[1]):
         return True
+    elif (vec1[0]==vec2[0]*(-1) and vec1[1]==vec2[1]*(-1)):
+        return True
     else:
         return False
 
 def get_parallel(vec):
     if cmpr(vec[0],vec[2]) and cmpr(vec[1],vec[3]):
         return 'two'
+    elif cmpr(vec[0],vec[2]) or cmpr(vec[1],vec[3]):
+        return 'one'
     else:
         return 'none'
 
@@ -245,8 +259,11 @@ def get_consecutive_sides_congruent(panjangSisi):
     else:
         return 'no'
 
+def renderImage(image):
+    cv2.imwrite('output.jpg', image)
+
 titikTengah = [] #harus dijadikan variabel global
-tresh = processImage('hexagon.jpeg')
+tresh = processImage('testimage/scalene-triangle.jpg')
 corners = findTitikSudut(tresh)
 titikTengah = counttitikTengah(corners)
 corners = sorted(corners, key=sortCorner) #memutar sudut melawan arah jarum jam
@@ -261,7 +278,6 @@ print(corners)
 print(panjangSisi)
 print(vector)
 print(unitVector)
-print(unitVector)
 print(angles)
 
 # Inisiasi awal clipspy
@@ -273,9 +289,8 @@ inf = inflect.engine()
 number_of_vertices = get_vertices(corners)
 env = add_fact(env,"number-of-vertices",number_of_vertices)
 
-if number_of_vertices=='three' or number_of_vertices=='five' or number_of_vertices=='six':
+if number_of_vertices=='three' or number_of_vertices=='five':
     number_of_same_edges = get_same_edges(panjangSisi)
-    print(number_of_same_edges)
     env = add_fact(env,"number-of-same-edges",number_of_same_edges)
 
     if number_of_same_edges=='two':
@@ -290,9 +305,13 @@ if number_of_vertices=='three' or number_of_vertices=='five' or number_of_vertic
             number_right_angles = get_right_angles(angles)
             env = add_fact(env,"number-right-angles",number_right_angles)
 
+if number_of_vertices=='six':
+    isAllAngleSame = checkAllAnglesSame(angles)
+    env = add_fact(env,"is-all-angles-same",isAllAngleSame)
+
 if number_of_vertices=='four':
     all_same_edges = get_all_same_edges(panjangSisi)
-    env = add_fact(env,"all_same_edges",all_same_edges)
+    env = add_fact(env,"all-same-edges",all_same_edges)
 
     if all_same_edges=='yes':
         the_angles_right = is_the_angles_right(angles)
@@ -303,12 +322,19 @@ if number_of_vertices=='four':
 
         if the_angles_right=='no':
             number_of_parallel = get_parallel(unitVector)
-            print('paralel ', number_of_parallel)
             env = add_fact(env,"number-of-parallel",number_of_parallel)
 
-            if number_of_parallel=='none':
-                consecutive_sides_congruent = get_consecutive_sides_congruent(panjangSisi)
-                env = add_fact(env,"consecutive-sides-are-congruent",consecutive_sides_congruent)
+        if number_of_parallel=='one':	
+            is_congruent = get_congruent(panjangSisi)
+            env = add_fact(env,"is-the-legs-congruent",is_congruent)
+            
+            if is_congruent=='no':
+                right_angle_position = get_right_angle_position(angles)	
+                env = add_fact(env,"right-angle-position",right_angle_position)
+
+        elif number_of_parallel=='none':
+            consecutive_sides_congruent = get_consecutive_sides_congruent(panjangSisi)
+            env = add_fact(env,"consecutive-sides-are-congruent",consecutive_sides_congruent)
 
 
 # Untuk menjalankan clips dan mendapatkan hasil
@@ -323,5 +349,6 @@ print(shape[0])
 cv2.namedWindow('image',cv2.WINDOW_NORMAL)
 cv2.resizeWindow('image', 600,400)
 cv2.imshow('image', tresh)
+renderImage(tresh)
 cv2.waitKey(0) 
 cv2.destroyAllWindows()
