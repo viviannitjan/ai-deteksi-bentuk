@@ -308,7 +308,7 @@
    (number-of-vertices other)
    (not (known ?))
    =>
-   (assert (known "Other Shape))
+   (assert (known "Other Shape"))
 )
 
 
