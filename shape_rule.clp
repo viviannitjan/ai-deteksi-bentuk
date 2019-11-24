@@ -56,7 +56,7 @@
    (not (number-of-vertices ?))
    (not (known ?))
    =>
-   (assert (number-of-vertices (ask-question "How many vertices the shape has ?" three four five six )))
+   (assert (number-of-vertices (ask-question "How many vertices the shape has ?" three four five six other)))
 )
 ;;****************
 ;;* Triangle *
@@ -301,6 +301,15 @@
    (assert (known "Irregular Hexagon"))
 )
 
+;;****************
+;;* Other *
+;;****************
+(defrule other-shape""
+   (number-of-vertices other)
+   (not (known ?))
+   =>
+   (assert (known "Other Shape))
+)
 
 
 ;;****************
