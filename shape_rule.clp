@@ -160,7 +160,7 @@
    (number-of-vertices four)
    (not (known ?))
    =>
-   (assert (number-of-parallel (ask-question "How many pair parallel side ?" one two none)))
+   (assert (number-of-parallel (ask-question "How many pair parallel side ?" one two )))
 )
 ;;****************
 ;;* Parallelogram *
@@ -170,13 +170,13 @@
    (number-of-parallel two)
    (not (known ?))
    =>
-   (assert (number-of-congrent-side (ask-question "How many  equal adjacent  edges parallelogram has ?" four two)))
+   (assert (number-of-congruent-side (ask-question "How many  equal adjacent  edges parallelogram has ?" four two)))
 )
 
 (defrule kite-parallelogram ""
    (number-of-vertices four)
    (number-of-parallel two)
-   (number-of-congrent-side two)
+   (number-of-congruent-side two)
    (not (known ?))
    =>
    (assert (known "Kite"))
@@ -185,7 +185,7 @@
 (defrule rhombus-parallelogram ""
    (number-of-vertices four)
    (number-of-parallel two)
-   (number-of-congrent-side four)
+   (number-of-congruent-side four)
    (not (known ?))
    =>
    (assert (known "Rhombus"))
@@ -255,15 +255,10 @@
    (number-of-vertices five)
    (not (known ?))
    =>
-   (assert (number-of-same-edges (ask-question "How many equal edges the pentagon has ?" five other)))
+   (assert (number-of-same-edges (ask-question "How many equal edges the pentagon has ?" five none)))
 )
-(defrule regular-pentagon-shape ""
-   (number-of-vertices five)
-   (number-of-same-edges five)
-   (not (known ?))
-   =>
-   (assert (known "Regular Pentagon"))
-)
+
+
 
 (defrule irregular-pentagon-shape ""
    (number-of-vertices five)
@@ -271,6 +266,14 @@
    (not (known ?))
    =>
    (assert (known "Irregular Pentagon"))
+)
+
+(defrule regular-pentagon-shape ""
+   (number-of-vertices five)
+   (number-of-same-edges five)
+   (not (known ?))
+   =>
+   (assert (known "Regular Pentagon"))
 )
 
 ;;****************
@@ -282,7 +285,7 @@
    =>
    (assert (number-of-same-edges (ask-question "How many equal edges the hexagon has ?" six other)))
 )
-(defrule regular-pentagon-shape ""
+(defrule regular-hexagon-shape ""
    (number-of-vertices six)
    (number-of-same-edges six)
    (not (known ?))
@@ -290,7 +293,7 @@
    (assert (known "Regular Hexagon"))
 )
 
-(defrule irregular-pentagon-shape ""
+(defrule irregular-hexagon-shape ""
    (number-of-vertices six)
    (number-of-same-edges other)
    (not (known ?))
