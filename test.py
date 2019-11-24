@@ -177,7 +177,7 @@ def get_right_angle_position():
 
 
 titikTengah = [] #harus dijadikan variabel global
-tresh = processImage('square.png')
+tresh = processImage('triangle.png')
 corners = findTitikSudut(tresh)
 titikTengah = counttitikTengah(corners)
 # corners = sorted(corners, key=sortCorner)
@@ -193,11 +193,6 @@ print(angles)
 # Inisiasi awal clipspy
 env = clips.Environment()
 env.load("shape_rule.clp")
-
-print("Agendas")
-agendas = list(env.activations())
-for agenda in agendas:
-    print(agenda)
 
 inf = inflect.engine()
 
@@ -237,15 +232,18 @@ if number_of_vertices=='four':
             env = add_fact(env,"right-angle-position",right_angle_position)
 
 agendas = list(env.activations())
-agendas = reversed(agendas)
+agendas = list(reversed(agendas))
+f = open("agenda.txt","w")
 for agenda in agendas:
-    print(agenda)
+    f.write(str(agenda)+"\n")
+f.close()
 
 # Untuk menjalankan clips dan mendapatkan hasil
 env.run()
 # Untuk mendapatkan hasil shape
 # print("Facts")
-# facts = list(env.facts())
+facts = list(env.facts())
+env.save_facts("facts.txt")
 # for fact in facts:
 #     if len(fact)!=0:
 #         print(fact)
@@ -254,16 +252,20 @@ env.run()
 # print()
 
 # print("Rules")
-# rules = list(env.rules())
-# for rule in rules:
-#     print(rule)
+rules = list(env.rules())
+f = open("rules.txt","w")
+for rule in rules:
+    f.write(str(rule)+"\n")
+f.close()
 # print()
 
-print("Agendas")
-agendas = list(env.activations())
-for agenda in agendas:
-    print(agenda)
+# print("Agendas")
+# agendas = list(env.activations())
+# for agenda in agendas:
+#     print(agenda)
 
+# for agenda2 in agendas2:
+#     print(agenda2)
 
 # cv2.namedWindow('image',cv2.WINDOW_NORMAL)
 # cv2.resizeWindow('image', 600,400)

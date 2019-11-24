@@ -6,7 +6,7 @@ import shape_detection as sd
 
 # import shape_detection as sd
 
-CURRENT_FILE_PATH_BE_PROCESSED = "D:\semester5\AI-tubes\giphy.gif"
+CURRENT_FILE_PATH_BE_PROCESSED = ".\\giphy.gif"
 FILE_TO_BE_EDITED = ".\\shape_rule.clp"
 CURRENT_FACT_FILE = ".\\facts.txt"
 CURRENT_AGENDA_FILE = ".\\agenda.txt"
@@ -157,16 +157,18 @@ def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rule
     photo = ImageTk.PhotoImage(image)
     CURRENT_FILE_PATH_BE_PROCESSED = f_path
     data.id_label['image'] = photo
-    data.id_label.configure(image=photo);
+    data.id_label.configure(image=photo)
     data.id_label.image = photo
     print("current file path: ", CURRENT_FILE_PATH_BE_PROCESSED)
 
     sd.main(f_path)
 
-    facts = lines_in_even()
+    with open(CURRENT_FACT_FILE, 'r') as f:
+        lines = f.read().splitlines()
+        last_line = lines[-1]
 
     detection_result_data.id_label.delete('1.0', tkinter.END)
-    detection_result_data.id_label.insert(tkinter.END, facts[-1])
+    detection_result_data.id_label.insert(tkinter.END, last_line)
 
     match_facts_data.id_label.delete('1.0', tkinter.END)
     match_facts_data.id_label.insert(tkinter.END, lines_in_even())
@@ -175,8 +177,6 @@ def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rule
     f = f.read()
     hit_rules_data.id_label.delete('1.0', tkinter.END)
     hit_rules_data.id_label.insert(tkinter.END, f)
-
-    f.close()
 
 def go_to_new_page(texts):
     root2 = tkinter.Toplevel()  # Note Toplevel, NOT Tk.

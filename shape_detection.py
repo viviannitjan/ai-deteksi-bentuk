@@ -273,9 +273,10 @@ def printRules():
     f.close()
 
 def main(file_path):
-    titikTengah = [] #harus dijadikan variabel global
+    global titikTengah #harus dijadikan variabel global
     # tresh = processImage('testimage/scalene-triangle.jpg')
     tresh = processImage(file_path)
+    global corners
     corners = findTitikSudut(tresh)
     titikTengah = counttitikTengah(corners)
     corners = sorted(corners, key=sortCorner) #memutar sudut melawan arah jarum jam
@@ -295,8 +296,6 @@ def main(file_path):
     # Inisiasi awal clipspy
     env = clips.Environment()
     env.load("shape_rule.clp")
-
-    inf = inflect.engine()
 
     number_of_vertices = get_vertices(corners)
     env = add_fact(env,"number-of-vertices",number_of_vertices)
@@ -336,17 +335,17 @@ def main(file_path):
                 number_of_parallel = get_parallel(unitVector)
                 env = add_fact(env,"number-of-parallel",number_of_parallel)
 
-            if number_of_parallel=='one':	
-                is_congruent = get_congruent(panjangSisi)
-                env = add_fact(env,"is-the-legs-congruent",is_congruent)
-                
-                if is_congruent=='no':
-                    right_angle_position = get_right_angle_position(angles)	
-                    env = add_fact(env,"right-angle-position",right_angle_position)
+                if number_of_parallel=='one':	
+                    is_congruent = get_congruent(panjangSisi)
+                    env = add_fact(env,"is-the-legs-congruent",is_congruent)
+                    
+                    if is_congruent=='no':
+                        right_angle_position = get_right_angle_position(angles)	
+                        env = add_fact(env,"right-angle-position",right_angle_position)
 
-            elif number_of_parallel=='none':
-                consecutive_sides_congruent = get_consecutive_sides_congruent(panjangSisi)
-                env = add_fact(env,"consecutive-sides-are-congruent",consecutive_sides_congruent)
+                elif number_of_parallel=='none':
+                    consecutive_sides_congruent = get_consecutive_sides_congruent(panjangSisi)
+                    env = add_fact(env,"consecutive-sides-are-congruent",consecutive_sides_congruent)
 
     agendas = list(env.activations())
     agendas = list(reversed(agendas))
@@ -368,3 +367,7 @@ def main(file_path):
     renderImage(tresh)
     cv2.waitKey(0) 
     cv2.destroyAllWindows()
+
+inf = inflect.engine()
+titikTengah = []
+corners = 0
