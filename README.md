@@ -30,3 +30,9 @@ Program yang dibuat menggunakan Python serta CLIPS sebagai sistem rule based.
 
 ## Contoh gambar
 Contoh gambar ada pada folder testimage
+
+## Cara penggunaan
+```python gui2.py```
+
+
+
