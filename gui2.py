@@ -68,7 +68,7 @@ def main():
     show_rules_button = ttk.Button(main_frame,
                                    text='Show Rules')
     show_rules_button.pack()
-    show_rules_button['command'] = lambda: go_to_new_page(lines_in_even(1, CURRENT_RULES_FILE))  # todo
+    show_rules_button['command'] = lambda: go_to_new_page(lines_in_even(0, 1, CURRENT_RULES_FILE))  # todo
 
     # show_facts_button = ttk.Button(main_frame,
     #                                text='Show Facts')
@@ -172,7 +172,7 @@ def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rule
     detection_result_data.id_label.insert(tkinter.END, last_line)
 
     match_facts_data.id_label.delete('1.0', tkinter.END)
-    match_facts_data.id_label.insert(tkinter.END, lines_in_even(2), CURRENT_FACT_FILE)
+    match_facts_data.id_label.insert(tkinter.END, lines_in_even(1, 2, CURRENT_FACT_FILE))
 
     f = open(CURRENT_AGENDA_FILE, "r")
     f = f.read()
@@ -199,14 +199,14 @@ def go_to_new_page(texts):
     make_scroll(lblSize, rows=30, length_per_rows=70, quote=texts)
 
 
-def lines_in_even(line_break, current_file):
+def lines_in_even(line_start, line_break, current_file):
     output = ""
     rows = 0
     with open(current_file) as f:
         content = f.readlines()
         print(content)
 
-        for i in range(1, len(content), line_break):
+        for i in range(line_start, len(content), line_break):
             output += content[i]
 
     print("Output")
