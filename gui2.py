@@ -58,7 +58,7 @@ def main():
     open_image_button = ttk.Button(main_frame,
                                    text='Open Image')
     open_image_button.pack()
-    open_image_button['command'] = lambda: show_pics_open_image(img1_data, detection_result, match_facts, hit_rules)
+    open_image_button['command'] = lambda: show_pics_open_image(img1_data, detection_result, match_facts, hit_rules, img1_data)
 
     rule_editor_button = ttk.Button(main_frame, text='Open rule editor')
     rule_editor_button.pack()
@@ -150,7 +150,7 @@ def go_to_editor_page():
     decrease_button['command'] = lambda: save_editor_page(data_text.id_label.get('1.0', tkinter.END))
 
 
-def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rules_data):
+def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rules_data, data2):
     f_path = filedialog.askopenfilename()
     image = Image.open(f_path)
     image = image.resize((500, 300), Image.ANTIALIAS)
@@ -160,6 +160,7 @@ def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rule
     data.id_label.configure(image=photo)
     data.id_label.image = photo
     print("current file path: ", CURRENT_FILE_PATH_BE_PROCESSED)
+    temp = input("AAA")
 
     sd.main(f_path)
 
@@ -178,6 +179,15 @@ def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rule
     hit_rules_data.id_label.delete('1.0', tkinter.END)
     hit_rules_data.id_label.insert(tkinter.END, f)
 
+    image = Image.open('output.jpg')
+    image = image.resize((500, 300), Image.ANTIALIAS)
+    photo = ImageTk.PhotoImage(image)
+    CURRENT_FILE_PATH_BE_PROCESSED = f_path
+    data.id_label['image'] = photo
+    data.id_label.configure(image=photo)
+    data.id_label.image = photo
+
+    
 def go_to_new_page(texts):
     root2 = tkinter.Toplevel()  # Note Toplevel, NOT Tk.
 

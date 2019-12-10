@@ -361,12 +361,12 @@ def main(file_path):
     facts = list(env.facts())
     env.save_facts("facts.txt")
 
-    cv2.namedWindow('image',cv2.WINDOW_NORMAL)
-    cv2.resizeWindow('image', 600,400)
-    cv2.imshow('image', tresh)
-    renderImage(tresh)
-    cv2.waitKey(0) 
-    cv2.destroyAllWindows()
+    # cv2.namedWindow('image',cv2.WINDOW_NORMAL)
+    # cv2.resizeWindow('image', 600,400)
+    # cv2.imshow('image', tresh)
+    # renderImage(tresh)
+    # cv2.waitKey(0) 
+    # cv2.destroyAllWindows()
 
 inf = inflect.engine()
 titikTengah = []
