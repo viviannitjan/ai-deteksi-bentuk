@@ -364,7 +364,7 @@ def main(file_path):
     # cv2.namedWindow('image',cv2.WINDOW_NORMAL)
     # cv2.resizeWindow('image', 600,400)
     # cv2.imshow('image', tresh)
-    # renderImage(tresh)
+    renderImage(tresh)
     # cv2.waitKey(0) 
     # cv2.destroyAllWindows()
 

@@ -58,7 +58,7 @@ def main():
     open_image_button = ttk.Button(main_frame,
                                    text='Open Image')
     open_image_button.pack()
-    open_image_button['command'] = lambda: show_pics_open_image(img1_data, detection_result, match_facts, hit_rules, img1_data)
+    open_image_button['command'] = lambda: show_pics_open_image(img1_data, detection_result, match_facts, hit_rules, img2_data)
 
     rule_editor_button = ttk.Button(main_frame, text='Open rule editor')
     rule_editor_button.pack()
@@ -160,7 +160,6 @@ def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rule
     data.id_label.configure(image=photo)
     data.id_label.image = photo
     print("current file path: ", CURRENT_FILE_PATH_BE_PROCESSED)
-    temp = input("AAA")
 
     sd.main(f_path)
 
@@ -183,9 +182,9 @@ def show_pics_open_image(data, detection_result_data, match_facts_data, hit_rule
     image = image.resize((500, 300), Image.ANTIALIAS)
     photo = ImageTk.PhotoImage(image)
     CURRENT_FILE_PATH_BE_PROCESSED = f_path
-    data.id_label['image'] = photo
-    data.id_label.configure(image=photo)
-    data.id_label.image = photo
+    data2.id_label['image'] = photo
+    data2.id_label.configure(image=photo)
+    data2.id_label.image = photo
 
     
 def go_to_new_page(texts):
